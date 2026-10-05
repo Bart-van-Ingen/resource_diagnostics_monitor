@@ -2,7 +2,7 @@ from diagnostic_msgs.msg import DiagnosticStatus, KeyValue
 from rclpy.callback_groups import ReentrantCallbackGroup
 from rclpy.qos import qos_profile_sensor_data
 
-from resource_monitoring_interfaces.msg import Field, Resource
+from resource_monitor_interfaces.msg import Field, Resource
 
 from resource_diagnostics_updater_py.diagnosed_resource import DiagnosedResource
 from resource_diagnostics_updater_py.diagnostics_publisher import DiagnosticsPublisher
@@ -24,7 +24,7 @@ class ResourceDiagnosticsUpdater:
         self.diagnostic_status.level = DiagnosticStatus.STALE
         self.diagnostic_status.name = diagnosed_resource.name
         self.diagnostic_status.message = 'unknown'
-        self.diagnostic_status.hardware_id = 'telegraf_resource_monitor'
+        self.diagnostic_status.hardware_id = 'resource_diagnostics_monitor'
 
         # Register this diagnostic status with the diagnostics publisher so that it gets published
         #  at the publishers timer rate

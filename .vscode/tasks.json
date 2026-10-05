@@ -62,13 +62,6 @@
             "command": "sudo rm -fr build install log; sudo py3clean .",
             "problemMatcher": []
         },
-        {
-            "label": "source",
-            "detail": "Source workspace",
-            "type": "shell",
-            "command": "source /opt/ros/${env:ROS_DISTRO}/setup.bash",
-            "problemMatcher": []
-        },
         // Linting and static code analysis tasks
         // These invoke the ament_* CLI tools directly. They used to use "type": "ament", which
         // was provided by the discontinued ms-iot.vscode-ros extension. Its replacement,
@@ -216,33 +209,6 @@
             }
         },
         {
-            "label": "xmllint",
-            "detail": "Run xmllint on xml files.",
-            "type": "shell",
-            "command": "ament_xmllint src/",
-            "problemMatcher": {
-                "owner": "ament_xmllint",
-                "source": "xmllint",
-                "severity": "error",
-                "fileLocation": [
-                    "autoDetect",
-                    "${workspaceFolder}"
-                ],
-                "pattern": {
-                    "regexp": "^(.+?):(\\d+):\\s+(.+?)\\s*:\\s+(.+)$",
-                    "file": 1,
-                    "line": 2,
-                    "code": 3,
-                    "message": 4
-                }
-            },
-            "presentation": {
-                "panel": "dedicated",
-                "reveal": "silent",
-                "clear": true
-            }
-        },
-        {
             "label": "lint all",
             "detail": "Run all linters.",
             "dependsOn": [
@@ -251,7 +217,6 @@
                 "flake8",
                 "lint_cmake",
                 "pep257",
-                "xmllint",
             ],
             "problemMatcher": []
         },
@@ -300,9 +265,10 @@
             "options": [
                 "resource_diagnostics_updater_py",
                 "resource_diagnostics_updater_cpp",
-                "resource_monitoring_interfaces",
+                "resource_monitor_interfaces",
                 "telegraf_resource_monitor",
-                "telegraf_resource_monitor_cpp"
+                "resource_monitor_cpp",
+                "collectd_socket_writer"
             ]
         },
         {

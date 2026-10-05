@@ -1,11 +1,11 @@
-site_name: Telegraf Resource Monitor
-site_description: ROS 2 resource monitoring built on Telegraf.
-site_url: https://bart-van-ingen.github.io/telegraf_resource_monitor/
-repo_url: https://github.com/Bart-van-Ingen/telegraf_resource_monitor
-repo_name: Bart-van-Ingen/telegraf_resource_monitor
+site_name: Resource Diagnostics Monitor
+site_description: ROS 2 resource monitoring built on Telegraf or collectd.
+site_url: https://bart-van-ingen.github.io/resource_diagnostics_monitor/
+repo_url: https://github.com/Bart-van-Ingen/resource_diagnostics_monitor
+repo_name: Bart-van-Ingen/resource_diagnostics_monitor
 edit_uri: edit/main/
 
-docs_dir: docs
+docs_dir: .docs
 
 theme:
   name: material
@@ -59,7 +59,7 @@ nav:
   - Home: index.md
   - Motivation: motivation.md
   - Architecture: architecture.md
-  - Telegraf Installation: installation.md
+  - Metric Monitors: metric_monitors.md
   - Learnings: 
       - learnings/index.md
       - Build Command & Clang: learnings/clang_compiler.md

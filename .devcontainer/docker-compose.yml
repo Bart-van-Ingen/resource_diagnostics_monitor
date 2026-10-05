@@ -12,9 +12,9 @@ services:
     #   dockerfile: .devcontainer/Dockerfile
 
     volumes:
-      # Mount the whole repo at the workspace root so non-package files (docker/, .git,
+      # Mount the whole repo at the workspace root so non-package files (.docker/, .git,
       # README, .clang-format, etc.) are visible at the top level.
-      # Paths are relative to the primary docker-compose.yml file's directory (docker/).
+      # Paths are relative to the primary docker-compose.yml file's directory (.docker/).
       - ..:/ros_ws/src:cached
 
       # VS Code opens /ros_ws (see devcontainer.json), but the repo -- and with it .vscode/ --

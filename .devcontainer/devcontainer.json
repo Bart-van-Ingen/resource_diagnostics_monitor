@@ -5,7 +5,7 @@
 	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
 	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
 	"dockerComposeFile": [
-		"../docker/docker-compose.yaml",
+		"../.docker/docker-compose.yaml",
 		"docker-compose.yml"
 	],
 	// The 'service' property is the name of the service for the container that VS Code should
@@ -40,7 +40,10 @@
 				"ms-python.python",
 				"charliermarsh.ruff",
 				"ms-vscode.cmake-tools",
+				"tdennis4496.cmantic",
 				"llvm-vs-code-extensions.vscode-clangd",
+				// Provides the cppdbg debug type used by .vscode/launch.json.
+				"ms-vscode.cpptools",
 				"ranch-hand-robotics.rde-ros-2",
 				"aaron-bond.better-comments",
 				"mhutchie.git-graph",

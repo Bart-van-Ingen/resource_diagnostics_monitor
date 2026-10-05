@@ -5,6 +5,26 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "collectd plugin",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "/ros_ws/install/collectd_vendor/bin/collectd",
+      "args": [
+        "-f",
+        "-C",
+        "${workspaceFolder}/src/resource_diagnostics_utils/config/collectd.conf"
+      ],
+      "cwd": "/ros_ws",
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "debug"
+    },
+    {
       "name": "ROS: Attach",
       "type": "ros2",
       "request": "attach"

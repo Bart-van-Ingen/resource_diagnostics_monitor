@@ -7,10 +7,10 @@
 
 #include "resource_diagnostics_updater_cpp/diagnosed_resource.hpp"
 #include "resource_diagnostics_updater_cpp/diagnostic_publisher.hpp"
-#include "resource_monitoring_interfaces/msg/resource.hpp"
+#include "resource_monitor_interfaces/msg/resource.hpp"
 
 using DiagnosticStatusType = diagnostic_msgs::msg::DiagnosticStatus;
-using ResourceType = resource_monitoring_interfaces::msg::Resource;
+using ResourceType = resource_monitor_interfaces::msg::Resource;
 
 class ResourceDiagnosticsUpdater
 {

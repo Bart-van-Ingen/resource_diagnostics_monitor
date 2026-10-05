@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>collectd_vendor</name>
+  <version>0.0.0</version>
+  <description>
+    Wrapper around collectd, it provides an ExternalProject build of it with all the
+    plugins that need no external library on Linux.
+  </description>
+  <maintainer email="van.ingen.bart@gmail.com">Bart</maintainer>
+  <!-- license information https://github.com/collectd/collectd/blob/main/COPYING -->
+  <license>Apache-2.0</license>  <!-- the contents of this package are Apache 2.0 -->
+  <license>MIT</license>  <!-- the collectd daemon and part of the plugins -->
+  <license>GPL-2.0</license>  <!-- part of the plugins, for example cpu, csv, df, disk, memory, processes and thermal -->
+  <license>LGPL-2.1</license>  <!-- the network plugin -->
+  <license>ISC</license>  <!-- the fhcount plugin -->
+  <url type="website">https://github.com/collectd/collectd</url>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+  <!-- libtool probes for "file" while configuring. Same reason libcurl_vendor depends on it. -->
+  <build_depend>file</build_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

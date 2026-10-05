@@ -13,9 +13,9 @@
 #include "resource_diagnostics_updater_cpp/diagnosed_resource.hpp"
 #include "resource_diagnostics_updater_cpp/diagnostic_publisher.hpp"
 #include "resource_diagnostics_updater_cpp/resource_diagnostics_updater.hpp"
-#include "resource_monitoring_interfaces/msg/resource.hpp"
+#include "resource_monitor_interfaces/msg/resource.hpp"
 
-using ResourceType = resource_monitoring_interfaces::msg::Resource;
+using ResourceType = resource_monitor_interfaces::msg::Resource;
 using KeyValueType = diagnostic_msgs::msg::KeyValue;
 
 ResourceDiagnosticsUpdater::ResourceDiagnosticsUpdater(rclcpp::Node& node,
@@ -28,7 +28,7 @@ ResourceDiagnosticsUpdater::ResourceDiagnosticsUpdater(rclcpp::Node& node,
   diagnostic_status_.level = DiagnosticStatusType::STALE;
   diagnostic_status_.name = diagnosed_resource_.name;
   diagnostic_status_.message = "unknown";
-  diagnostic_status_.hardware_id = "telegraf_resource_monitor";
+  diagnostic_status_.hardware_id = "resource_diagnostics_monitor";
 
   diagnostic_publisher_.add_diagnostic_status(diagnostic_status_);
 

@@ -1,0 +1,79 @@
+# Docker Compose file for resource_diagnostics_monitor repo
+#
+# Usage:
+#
+# To build the images:
+#   docker compose build
+#
+# To start up a specific service by name:
+#   docker compose up <service_name>
+#
+# To open an interactive shell to a running container:
+#   docker exec -it <container_name> bash
+
+name: resource-diagnostics-monitor
+
+services:
+  # Base image containing dependencies.
+  base:
+    image: resource_diagnostics_monitor:base
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile
+      args:
+        ROS_DISTRO: humble
+      target: base
+    # Interactive shell
+    stdin_open: true
+    tty: true
+    # Networking and IPC for ROS 2
+    network_mode: host
+    ipc: host
+    # Needed to display graphical applications
+    privileged: True
+    environment:
+      # Allows graphical programs in the container.
+      - DISPLAY=${DISPLAY}
+      - QT_X11_NO_MITSHM=1
+      - NVIDIA_DRIVER_CAPABILITIES=all
+      # X11 authentication file for secure display access
+      - XAUTHORITY=/tmp/.docker.xauth
+    volumes:
+      # Allows graphical programs in the container.
+      - /tmp/.X11-unix:/tmp/.X11-unix:rw
+      - /tmp/.docker.xauth:/root/.Xauthority:rw
+      # X11 authentication credentials for secure display access
+      - /tmp/.docker.xauth:/tmp/.docker.xauth:rw
+
+  # Overlay image containing the example source code.
+  overlay:
+    extends: base
+    image: resource_diagnostics_monitor:overlay
+    build:
+      context: ..
+      ssh:
+        - default
+      dockerfile: .docker/Dockerfile
+      target: overlay
+
+  dev:
+    extends: overlay
+    image: resource_diagnostics_monitor:dev
+    hostname: ros_dev_container
+    build:
+      context: ..
+      dockerfile: .docker/Dockerfile
+      target: dev
+    volumes:
+      - ../.bash-history:/home/dev/.bash_history
+      # Mount host filesystem for system monitoring
+      - /:/hostfs:ro
+    environment:
+      # Enable Docker host monitoring from within container
+      - HOST_ETC=/hostfs/etc
+      - HOST_PROC=/hostfs/proc
+      - HOST_SYS=/hostfs/sys
+      - HOST_VAR=/hostfs/var
+      - HOST_RUN=/hostfs/run
+      - HOST_MOUNT_PREFIX=/hostfs
+    command: bash

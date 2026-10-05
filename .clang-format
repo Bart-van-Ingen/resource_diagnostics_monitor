@@ -84,7 +84,7 @@ IncludeCategories:
     Priority: 1
   # --- this workspace's own interface package: keep it with the workspace
   # headers in group 4 instead of the upstream ROS group.
-  - Regex: '^[<"]resource_monitoring_interfaces/'
+  - Regex: '^[<"]resource_monitor_interfaces/'
     Priority: 4
   # --- 2. ROS 2 core packages + generated interface packages
   - Regex: "^[<\"](ament_[[:alnum:]_]+|builtin_interfaces|class_loader|composition_interfaces|diagnostic_updater|libstatistics_collector|message_filters|pluginlib|rcl|rcl_[[:alnum:]_]+|rclcpp|rclcpp_[[:alnum:]_]+|rcpputils|rcutils|rmw|rmw_[[:alnum:]_]+|rosbag2_[[:alnum:]_]+|rosidl_[[:alnum:]_]+|tf2|tf2_[[:alnum:]_]+|[[:alnum:]_]+_msgs|[[:alnum:]_]+_srvs|[[:alnum:]_]+_actions|[[:alnum:]_]+_interfaces)/"

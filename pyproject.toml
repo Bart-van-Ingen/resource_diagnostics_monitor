@@ -1,9 +1,9 @@
 [project]
-name = "telegraf-resource-monitor"
+name = "resource-diagnostics-monitor"
 version = "0.0.0"
-description = "Tooling and documentation for the telegraf_resource_monitor ROS 2 workspace."
+description = "Tooling and documentation for the resource_diagnostics_monitor ROS 2 workspace."
 requires-python = ">=3.10"
-dependencies = ["pytest>=9.1.1"]
+dependencies = ["pytest<9"]
 
 # Not a Python package, this pyproject only carries tooling config and dev
 # dependency groups.
@@ -42,5 +42,5 @@ section-order = [
 ]
 default-section = "local-folder"
 known-third-party = ["pytest", "yaml"]
-known-first-party = ["resource_monitoring_interfaces"]
+known-first-party = ["resource_monitor_interfaces"]
 sections.ros2 = ["rclpy", "diagnostic_msgs", "std_msgs", "launch", "launch_ros"]

@@ -11,7 +11,7 @@
 
   <depend>rclcpp</depend>
   <depend>rclcpp_components</depend>
-  <depend>resource_monitoring_interfaces</depend>
+  <depend>resource_monitor_interfaces</depend>
 
   <depend>yaml-cpp</depend>
   <depend>ros2_fmt_logger</depend>

@@ -10,7 +10,7 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(diagnostic_msgs REQUIRED)
-find_package(resource_monitoring_interfaces REQUIRED)
+find_package(resource_monitor_interfaces REQUIRED)
 find_package(ros2_fmt_logger REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
@@ -34,7 +34,7 @@ ament_target_dependencies(
   resource_diagnostics_updater_lib
   "rclcpp"
   "diagnostic_msgs"
-  "resource_monitoring_interfaces"
+  "resource_monitor_interfaces"
 )
 
 # Link the third-party JSON library
@@ -85,6 +85,10 @@ if(BUILD_TESTING)
   # comment the line when this package is in a git repo and when
   # a copyright and license is added to all source files
   set(ament_cmake_cpplint_FOUND TRUE)
+  # the following line skips uncrustify, which enforces the ROS style and
+  # disagrees with src/.clang-format on brace placement and pointer
+  # alignment. clang-format is the single source of truth for this repo.
+  set(ament_cmake_uncrustify_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 endif()
 

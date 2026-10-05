@@ -25,4 +25,5 @@ colcon build \
     "-DCMAKE_C_FLAGS=-fdiagnostics-absolute-paths -fdiagnostics-color=always" \
     "-DCMAKE_CXX_FLAGS=-fdiagnostics-absolute-paths -fdiagnostics-color=always" \
     "-DCMAKE_EXPORT_COMPILE_COMMANDS=On" \
+    "-DCMAKE_BUILD_TYPE=${BUILD_TYPE:-RelWithDebInfo}" \
     "$@" # Allows you to pass extra args like --packages-select from the CLI

@@ -4,6 +4,7 @@
     "editor.rulers": [
         99
     ],
+    "terminal.integrated.scrollback": 100000,
     "editor.renderWhitespace": "all",
     "editor.formatOnSave": true,
     "editor.formatOnType": true,
@@ -36,6 +37,11 @@
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ],
     "python.analysis.extraPaths": [
+        // Resolve workspace packages to src/ (not the symlinked copies under install/).
+        // extraPaths are searched before site-packages / PYTHONPATH.
+        "${workspaceFolder}/src/resource_diagnostics_updater_py",
+        "${workspaceFolder}/src/resource_diagnostics_utils",
+        "${workspaceFolder}/src/resource_monitor_py",
         "/opt/ros/humble/lib/python3.10/site-packages",
         "/opt/ros/humble/local/lib/python3.10/dist-packages"
     ],
@@ -51,6 +57,7 @@
     ],
     // CPP SETTINGS
     "cmake.ignoreCMakeListsMissing": true,
+    "C_Cpp.intelliSenseEngine": "disabled", // needed for cppdbg, but want clangd for intellisense
     "clangd.enable": true,
     "[cpp]": {
         "editor.defaultFormatter": "llvm-vs-code-extensions.vscode-clangd",
@@ -65,6 +72,10 @@
     // MARKDOWN SETTINGS
     "[markdown]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true,
+        "editor.wordWrap": "bounded",
+        "editor.wordWrapColumn": 99,
+        "editor.renderWhitespace": "trailing"
     },
     // GIT GRAPH SETTINGS
     "git-graph.maxDepthOfRepoSearch": 1,
