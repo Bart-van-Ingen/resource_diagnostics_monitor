@@ -36,7 +36,7 @@ def declare_collectd_config_path():
     return DeclareLaunchArgument(
         name='collectd_config_path',
         default_value=DEFAULT_COLLECTD_CONFIG_PATH,
-        description='Path to the telegraf config file telegraf is started with.',
+        description='Path to the collectd config file collectd is started with.',
     )
 
 
