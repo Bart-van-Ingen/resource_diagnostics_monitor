@@ -120,26 +120,28 @@ MeasurementFields SocketWriter::create_measurement_fields(const data_set_t& data
 }
 
 void SocketWriter::send_data_on_cycle_end(const MeasurementFields& measurement_fields,
-                                          PluginDataSet& pending_plugin_dataset)
+                                          PluginDataSet& plugin_dataset)
 {
   // A data set never reports the same measurement field twice in one read cycle, so a field we
   // already hold means collectd has moved on to the next cycle and the batch is complete and can
   // be sent.
 
   const bool next_cycle{std::any_of(measurement_fields.begin(), measurement_fields.end(),
-                                    [&pending_plugin_dataset](const auto& field) {
-                                      return pending_plugin_dataset.fields.count(field.first) != 0;
+                                    [&plugin_dataset](const auto& field) {
+                                      return plugin_dataset.fields.count(field.first) != 0;
                                     })};
 
   if (next_cycle)
   {
-    send(pending_plugin_dataset);
-    pending_plugin_dataset.fields.clear();
+    send_plugin_dataset(plugin_dataset);
+    plugin_dataset.fields.clear();
   }
 }
 
-void SocketWriter::send(const PluginDataSet& data_set_struct)
+void SocketWriter::send_plugin_dataset(const PluginDataSet& data_set_struct)
 {
+  // convert from struct to json using  implicit converting constructor. Cannot use brace init since
+  // it would create a json array
   json data_set_json = data_set_struct;
   const std::string json_dump{data_set_json.dump() + "\n"};
   DEBUG("collectd_socket_writer: %s ", json_dump.c_str());
@@ -189,7 +191,7 @@ int SocketWriter::shutdown()
       {
         if (!entry.second.fields.empty())
         {
-          send(entry.second);
+          send_plugin_dataset(entry.second);
         }
       }
     }

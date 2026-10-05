@@ -32,17 +32,103 @@ macro(build_collectd)
       --prefix=${CMAKE_INSTALL_PREFIX}
       # collectd installs the daemon in sbin, but the ament hook only puts bin on PATH.
       --sbindir=${CMAKE_INSTALL_PREFIX}/bin
-      # Start from nothing and add back only the plugins this workspace needs.
+      # Start from nothing and add back every plugin that needs no external
+      # library on Linux. The user can then turn them on in the config file
+      # without a rebuild. The default (all plugins on) is not used, because
+      # then the plugin set depends on which -dev packages are installed.
       --disable-all-plugins
+      --enable-aggregation
+      --enable-apcups
+      --enable-battery
+      --enable-buddyinfo
+      --enable-cgroups
+      --enable-check_uptime
+      --enable-chrony
+      --enable-conntrack
+      --enable-contextswitch
       --enable-cpu
+      --enable-cpufreq
+      --enable-cpusleep
       --enable-csv
       --enable-df
       --enable-disk
+      --enable-drbd
+      --enable-email
+      --enable-entropy
+      --enable-ethstat
+      --enable-exec
+      --enable-fhcount
+      --enable-filecount
+      --enable-fscache
+      --enable-hddtemp
+      --enable-hugepages
+      --enable-infiniband
+      --enable-interface
+      --enable-ipc
+      --enable-ipvs
+      --enable-irq
+      --enable-load
       --enable-logfile
+      --enable-logparser
+      --enable-madwifi
+      --enable-match_empty_counter
+      --enable-match_hashed
+      --enable-match_regex
+      --enable-match_timediff
+      --enable-match_value
+      --enable-mbmon
+      --enable-mcelog
+      --enable-md
+      --enable-mdevents
+      --enable-memcached
       --enable-memory
+      --enable-multimeter
+      --enable-network
+      --enable-nfs
+      --enable-notify_nagios
+      --enable-ntpd
+      --enable-numa
+      --enable-olsrd
+      --enable-openvpn
+      --enable-pcie_errors
+      --enable-powerdns
       --enable-processes
+      --enable-protocols
+      --enable-serial
+      --enable-statsd
+      --enable-swap
+      --enable-synproxy
+      --enable-syslog
+      --enable-table
+      --enable-tail
+      --enable-tail_csv
+      --enable-target_notification
+      --enable-target_replace
+      --enable-target_scale
+      --enable-target_set
+      --enable-target_v5upgrade
+      --enable-tcpconns
+      --enable-teamspeak2
+      --enable-ted
       --enable-thermal
+      --enable-threshold
+      --enable-turbostat
+      --enable-ubi
       --enable-unixsock
+      --enable-uptime
+      --enable-users
+      --enable-uuid
+      --enable-vmem
+      --enable-vserver
+      --enable-wireless
+      --enable-write_graphite
+      --enable-write_influxdb_udp
+      --enable-write_log
+      --enable-write_sensu
+      --enable-write_syslog
+      --enable-write_tsdb
+      --enable-zfs_arc
+      --enable-zookeeper
       # These bindings are built even when their plugins are off. Java needs a
       # JDK, Perl installs modules into the install space and wants YAML::Any.
       --without-java
@@ -96,8 +182,8 @@ macro(build_collectd)
 endmacro()
 
 # Unlike the other vendor packages there is no system check here. A collectd on
-# the system is built with an unknown plugin set, and the nine plugins above are
-# the reason this package exists.
+# the system is built with an unknown plugin set, and the fixed plugin set above
+# is the reason this package exists.
 build_collectd()
 
 # Both folders are needed: plugin.h includes "configfile.h" from its own folder

@@ -3,11 +3,7 @@
 #include "collectd_socket_writer/socket_writer.hpp"
 #include "plugin.h"
 
-// we use an anonymous namespace so that the socket writer is confined to file scope
-namespace
-{
-SocketWriter socket_writer;
-}
+static SocketWriter socket_writer;
 
 extern "C" {
 
@@ -42,7 +38,6 @@ static int sw_shutdown()
 __attribute__((visibility("default"))) void module_register(void)
 {
   plugin_register_config("collectd_socket_writer", sw_config, config_keys, config_keys_num);
-
   plugin_register_init("collectd_socket_writer", sw_init);
   plugin_register_write("collectd_socket_writer", sw_write, nullptr);
   plugin_register_shutdown("collectd_socket_writer", sw_shutdown);

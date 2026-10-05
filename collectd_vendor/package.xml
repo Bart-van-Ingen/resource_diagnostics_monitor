@@ -4,14 +4,16 @@
   <name>collectd_vendor</name>
   <version>0.0.0</version>
   <description>
-    Wrapper around collectd, it provides an ExternalProject build of it with only the
-    cpu, csv, df, disk, logfile, memory, processes, thermal and unixsock plugins.
+    Wrapper around collectd, it provides an ExternalProject build of it with all the
+    plugins that need no external library on Linux.
   </description>
   <maintainer email="van.ingen.bart@gmail.com">Bart</maintainer>
   <!-- license information https://github.com/collectd/collectd/blob/main/COPYING -->
   <license>Apache-2.0</license>  <!-- the contents of this package are Apache 2.0 -->
-  <license>MIT</license>  <!-- the collectd daemon, and the logfile and unixsock plugins -->
-  <license>GPL-2.0</license>  <!-- the cpu, csv, df, disk, memory, processes and thermal plugins -->
+  <license>MIT</license>  <!-- the collectd daemon and part of the plugins -->
+  <license>GPL-2.0</license>  <!-- part of the plugins, for example cpu, csv, df, disk, memory, processes and thermal -->
+  <license>LGPL-2.1</license>  <!-- the network plugin -->
+  <license>ISC</license>  <!-- the fhcount plugin -->
   <url type="website">https://github.com/collectd/collectd</url>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
