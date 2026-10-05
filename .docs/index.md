@@ -6,7 +6,7 @@
 
 This site contains the detailed documentation of the
 [Resource Diagnostics Monitor](https://github.com/Bart-van-Ingen/resource_diagnostics_monitor). This
-repository provides a ROS 2-based resource monitoring solution that leverages Telegraf to collect
+repository provides a ROS 2-based resource monitoring solution that leverages a metric collector (Telegraf or Collectd) to collect
 system metrics and publish them as ROS messages, with the possibility of also plugging into ROS2
 diagnostics.  
 Everything needed to run the package without knowing all the details can be found on the repo

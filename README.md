@@ -1,12 +1,12 @@
 <p align="center">
-   <img src="docs/images/resource-monitor-lizard-logo.png" alt="Resource Monitor Lizard Logo" width="30%" />
+   <img src=".docs/images/resource-monitor-lizard-logo.png" alt="Resource Monitor Lizard Logo" width="30%" />
 </p>
 
 # Resource Diagnostics Monitor
 
-This repository provides a ROS 2-based resource monitoring solution that leverages
-[Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) to collect system metrics and
-publish them as ROS messages, with the possibility of also plugging into ROS2 diagnostics. It is
+This repository provides a ROS 2-based resource monitoring solution that leverages one of two metric collectors,
+[Telegraf](https://www.influxdata.com/time-series-platform/telegraf/) or
+[collectd](https://github.com/collectd/collectd), to collect system metrics and publish them as ROS messages, with the possibility of also plugging into ROS2 diagnostics. It is
 designed to be easily configurable and extensible, allowing users to monitor various system
 resources such as CPU, memory, disk usage, and more. There are two implementations, one in Python
 and one in CPP.
@@ -29,6 +29,7 @@ The motivation, architecture and more can be found on the accompanying pages:
   - [resource_diagnostics_updater_py/cpp](#resource_diagnostics_updater_pycpp)
 - [Configuration](#configuration)
   - [Telegraf config](#telegraf-config)
+  - [Collectd config](#collectd-config)
   - [Diagnostics config](#diagnostics-config)
 - [The documentation](#the-documentation)
 
@@ -37,7 +38,7 @@ The motivation, architecture and more can be found on the accompanying pages:
 ### Prerequisites
 
 - ROS 2 Humble
-- (OPTIONAL) lm-sensors, for temperature monitoring
+- (OPTIONAL) lm-sensors, for temperature monitoring with telegraf. Collectd does not need it.
 
 ### Installing the Package
 
@@ -74,23 +75,25 @@ the accompanying documentation
 [architecture](https://bart-van-ingen.github.io/resource_diagnostics_monitor/architecture/) page.
 
 <p align="center">
-   <img src="docs/images/architecture_diagram.drawio.svg" alt="Resource Monitor Diagram" />
+   <img src=".docs/images/architecture_diagram.drawio.svg" alt="Resource Monitor Diagram" />
 </p>
 
 ## Launching the whole system
 
 `resource_diagnostics_monitor_bringup` starts the resource monitor node, the diagnostics updater
-node and telegraf together. Pick the launch file for the implementation you want:
+node and a metric collector together. Pick the launch file for the implementation you want:
 
 <details>
 <summary><b>Python version</b></summary>
 
 ```bash
-ros2 launch resource_diagnostics_monitor_bringup resource_diagnostics_monitor_py_launch.py
+ros2 launch resource_diagnostics_monitor_bringup resource_diagnostics_monitor_py_launch.py monitor_type:=collectd
 ```
 
-This includes the launch file of `resource_monitor_py` and the launch file of
-`resource_diagnostics_updater_py`. Each node runs in its own process.
+The `monitor_type` argument selects the metric collector: `telegraf` (default) or `collectd`.
+
+This starts the `resource_monitor_py` node and the `resource_diagnostics_updater_py` node. Each
+node runs in its own process.
 
 </details>
 
@@ -98,8 +101,10 @@ This includes the launch file of `resource_monitor_py` and the launch file of
 <summary><b>C++ version</b></summary>
 
 ```bash
-ros2 launch resource_diagnostics_monitor_bringup resource_diagnostics_monitor_cpp_launch.py
+ros2 launch resource_diagnostics_monitor_bringup resource_diagnostics_monitor_cpp_launch.py monitor_type:=collectd
 ```
+
+The `monitor_type` argument selects the metric collector: `telegraf` (default) or `collectd`.
 
 This loads both C++ nodes as components into one `component_container` process, with
 intra-process communication turned on. See
@@ -109,23 +114,26 @@ and
 
 </details>  
 
-Telegraf is not started right away. The launch file waits until the node created its unix socket,
-then starts telegraf. Telegraf exits if it cannot connect to the socket.
+The metric collector is not started right away. The launch file waits until the node created its unix socket,
+then starts the collector. Telegraf exits if it cannot connect to the socket.
 
 ## Launch arguments
 
 All launch files share the same arguments. Defaults point at the files installed by
 `resource_diagnostics_utils`, so no argument is needed for a default run.
 
-| Argument               | Default                                                       | Available in                              |
-| ---------------------- | ------------------------------------------------------------- | ----------------------------------------- |
-| `log_level`            | `INFO`                                                        | all launch files                          |
-| `config_file_path`     | `resource_diagnostics_utils/config/resource_diagnostics.yaml` | all launch files                          |
-| `telegraf_config_path` | `resource_diagnostics_utils/config/telegraf.conf`             | all launch files that start telegraf      |
-| `socket_path`          | `/tmp/telegraf.sock`                                          | the two `resource_monitor_*` launch files |
+| Argument               | Default                                                       | Available in                                    |
+| ---------------------- | ------------------------------------------------------------- | ----------------------------------------------- |
+| `log_level`            | `INFO`                                                        | all launch files                                |
+| `config_file_path`     | `resource_diagnostics_utils/config/resource_diagnostics.yaml` | all launch files                                |
+| `monitor_type`         | `telegraf`                                                    | all launch files that start a metric collector  |
+| `telegraf_config_path` | `resource_diagnostics_utils/config/telegraf.conf`             | all launch files that start telegraf            |
+| `collectd_config_path` | `resource_diagnostics_utils/config/collectd.conf`             | all launch files that start collectd            |
+| `socket_path`          | `/tmp/metric_collector.sock`                                  | all launch files that start a metric collector  |
 
-`socket_path` is only used to wait for the socket before telegraf starts. It must match the
-`socket_path` node parameter and the `outputs.socket_writer` address in the telegraf config.
+`socket_path` sets the `socket_path` node parameter and is used to wait for the socket before the
+metric collector starts. It must match the `outputs.socket_writer` address in the telegraf config
+and the `SocketPath` option in the collectd config.
 
 Example with your own files and debug logging:
 
@@ -142,8 +150,9 @@ Use `ros2 launch <package> <launch file> -s` to list the arguments of a launch f
 
 ### resource_monitor_py/cpp
 
-Starts and interfaces with telegraf over a unix socket and publishes the resources over ROS 2
-topics. Both launch files also start telegraf.
+Receives the metrics of the metric collector over a unix socket and publishes the resources over
+ROS 2 topics. Both launch files also start the metric collector. The `monitor_type` argument
+selects it: `telegraf` (default) or `collectd`.
 
 <details>
 <summary><b>Python version</b></summary>
@@ -195,7 +204,7 @@ To run it together with the C++ resource monitor, use
 
 ## Configuration
 
-Both config files live in `resource_diagnostics_utils/config/` and are shared by the Python and the
+All config files live in `resource_diagnostics_utils/config/` and are shared by the Python and the
 C++ implementation. Colcon copies them into the install space, so edits to the source files only
 take effect after a rebuild. Build with `colcon build --symlink-install` if you want to edit them
 in place.
@@ -205,7 +214,7 @@ in place.
 `resource_diagnostics_utils/config/telegraf.conf`:
 
 - Collects metrics every 100 millisecond (configurable per input)
-- Outputs data to unix socket `/tmp/telegraf.sock`
+- Outputs data to unix socket `/tmp/metric_collector.sock`
 - Includes processors for data cleanup and tagging
 - Monitors CPU, memory, disk, sensors, and ROS processes
 
@@ -213,6 +222,20 @@ Pass `telegraf_config_path` to use a different file.
 
 Look at the [influx plugins](https://docs.influxdata.com/telegraf/v1/plugins/) to find other
 plugins that can monitor relevant resources for you.
+
+### Collectd config
+
+`resource_diagnostics_utils/config/collectd.conf`:
+
+- Collects metrics every 0.2 seconds (`Interval`)
+- Outputs data to unix socket `/tmp/metric_collector.sock` with the `collectd_socket_writer` plugin from
+  this repository
+- Monitors CPU, memory, disk, thermal zones, and ROS processes
+
+Pass `collectd_config_path` to use a different file.
+
+Look at the [collectd reference](https://bart-van-ingen.github.io/collectd_unofficial_reference/)
+to find other plugins that can monitor relevant resources for you.
 
 ### Diagnostics config
 
@@ -235,7 +258,7 @@ The configuration file uses the following format:
 The same file is given to both nodes in the bringup launch files. Each node picks up its own
 section by node name.
 
-## Documentation
+## The documentation
 
 The more detailed documentation is deployed using mkdocs. To run it on your local device, run the
 following terminal command:
