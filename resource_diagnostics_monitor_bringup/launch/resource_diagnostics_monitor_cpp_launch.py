@@ -1,12 +1,14 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, GroupAction
-from launch.conditions import IfCondition
-from launch.substitutions import EqualsSubstitution, LaunchConfiguration
+from launch.substitutions import LaunchConfiguration
 from launch_ros.actions import ComposableNodeContainer
 from launch_ros.descriptions import ComposableNode
 
-from resource_diagnostics_utils.launch_arguments import declare_config_file_path, declare_log_level
-from resource_diagnostics_utils.monitor_launch_actions import collectd_actions, telegraf_actions
+from resource_diagnostics_utils.launch_arguments import (
+    declare_config_file_path,
+    declare_log_level,
+    declare_socket_path,
+)
+from resource_diagnostics_utils.monitor_launch_actions import monitor_type_actions
 
 
 def generate_launch_description():
@@ -15,12 +17,7 @@ def generate_launch_description():
         [
             declare_log_level(),
             declare_config_file_path(),
-            DeclareLaunchArgument(
-                name='monitor_type',
-                default_value='telegraf',
-                choices=['telegraf', 'collectd'],
-                description='the type of monitor to launch, options: telegraf, collectd',
-            ),
+            declare_socket_path(),
             ComposableNodeContainer(
                 name='resource_monitor_container',
                 namespace='',
@@ -39,9 +36,12 @@ def generate_launch_description():
                         package='resource_monitor_cpp',
                         plugin='ResourceMonitorNode',
                         name='resource_monitor_node',
-                        parameters=[LaunchConfiguration('config_file_path')],
+                        parameters=[
+                            LaunchConfiguration('config_file_path'),
+                            {'socket_path': LaunchConfiguration('socket_path')},
+                        ],
                         # both nodes need this, otherwise the messages go through DDS.
-                        # see docs/intra_process_communication.md
+                        # see .docs/intra_process_communication.md
                         extra_arguments=[{'use_intra_process_comms': True}],
                     ),
                     ComposableNode(
@@ -53,19 +53,6 @@ def generate_launch_description():
                     ),
                 ],
             ),
-            GroupAction(
-                actions=telegraf_actions(),
-                scoped=False,
-                condition=IfCondition(
-                    EqualsSubstitution(LaunchConfiguration('monitor_type'), 'telegraf')
-                ),
-            ),
-            GroupAction(
-                actions=collectd_actions(),
-                scoped=False,
-                condition=IfCondition(
-                    EqualsSubstitution(LaunchConfiguration('monitor_type'), 'collectd')
-                ),
-            ),
+            *monitor_type_actions(),
         ]
     )

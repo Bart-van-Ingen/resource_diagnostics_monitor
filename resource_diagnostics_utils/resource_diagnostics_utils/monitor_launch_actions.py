@@ -4,16 +4,18 @@ from pathlib import Path
 
 from launch.actions import (
     ExecuteProcess,
+    GroupAction,
     OpaqueCoroutine,
     RegisterEventHandler,
 )
+from launch.conditions import IfCondition
 from launch.event_handlers import OnExecutionComplete
-from launch.substitutions import LaunchConfiguration
+from launch.substitutions import EqualsSubstitution, LaunchConfiguration
 
 from resource_diagnostics_utils.default_paths import COLLECTD_BIN, TELEGRAF_BIN
 from resource_diagnostics_utils.launch_arguments import (
     declare_collectd_config_path,
-    declare_socket_path,
+    declare_monitor_type,
     declare_telegraf_config_path,
 )
 
@@ -54,7 +56,6 @@ def telegraf_actions():
 
     return [
         declare_telegraf_config_path(),
-        declare_socket_path(),
         # registering this after the wait action would miss its completion event
         RegisterEventHandler(
             OnExecutionComplete(
@@ -78,7 +79,6 @@ def collectd_actions():
 
     return [
         declare_collectd_config_path(),
-        declare_socket_path(),
         # registering this after the wait action would miss its completion event
         RegisterEventHandler(
             OnExecutionComplete(
@@ -87,4 +87,25 @@ def collectd_actions():
             )
         ),
         wait_for_socket_action,
+    ]
+
+
+# starts the metric collector that the monitor_type launch argument selects
+def monitor_type_actions():
+    return [
+        declare_monitor_type(),
+        GroupAction(
+            actions=telegraf_actions(),
+            scoped=False,
+            condition=IfCondition(
+                EqualsSubstitution(LaunchConfiguration('monitor_type'), 'telegraf')
+            ),
+        ),
+        GroupAction(
+            actions=collectd_actions(),
+            scoped=False,
+            condition=IfCondition(
+                EqualsSubstitution(LaunchConfiguration('monitor_type'), 'collectd')
+            ),
+        ),
     ]

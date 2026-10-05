@@ -24,6 +24,15 @@ def declare_config_file_path():
     )
 
 
+def declare_monitor_type():
+    return DeclareLaunchArgument(
+        name='monitor_type',
+        default_value='telegraf',
+        choices=['telegraf', 'collectd'],
+        description='the type of monitor to launch, options: telegraf, collectd',
+    )
+
+
 def declare_telegraf_config_path():
     return DeclareLaunchArgument(
         name='telegraf_config_path',
@@ -45,8 +54,8 @@ def declare_socket_path():
         name='socket_path',
         default_value=DEFAULT_SOCKET_PATH,
         description=(
-            'Path of the unix socket the node creates. Only used to wait for that socket '
-            'before telegraf starts, so it must match the socket_path node parameter and '
-            'the outputs.socket_writer address in the telegraf config.'
+            'Path of the unix socket the node creates. It must '
+            'match the outputs.socket_writer address in the telegraf config and the '
+            'SocketPath option in the collectd config.'
         ),
     )
