@@ -14,7 +14,7 @@ class UnixSocketManager:
         self,
         logger: RcutilsLogger,
         sensor_message_buffer: SensorMessageBuffer,
-        socket_path: str = '/tmp/telegraf.sock',
+        socket_path: str,
     ) -> None:
 
         self.logger = logger

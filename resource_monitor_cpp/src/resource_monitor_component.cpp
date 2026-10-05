@@ -19,7 +19,7 @@ ResourceMonitorNode::ResourceMonitorNode(const rclcpp::NodeOptions& options)
                     static_cast<std::size_t>(node_->declare_parameter("max_buffer_size", 100))}
 
   , socket_manager_{node_->get_logger(),
-                    node_->declare_parameter("socket_path", std::string{"/tmp/telegraf.sock"}),
+                    node_->declare_parameter("socket_path", std::string{"/tmp/metric_collector.sock"}),
                     message_buffer_}
 
   , message_processor_{node_, message_buffer_}

@@ -18,7 +18,7 @@ def main(args=None):
 
     sensor_message_buffer = SensorMessageBuffer(logger)
 
-    node.declare_parameter('socket_path', '/tmp/telegraf.sock')
+    node.declare_parameter('socket_path', '/tmp/metric_collector.sock')
     socket_path = node.get_parameter('socket_path').get_parameter_value().string_value
     unix_socket_manager = UnixSocketManager(logger, sensor_message_buffer, socket_path)
     sensor_message_processor = SensorMessageProcessor(node, sensor_message_buffer)
