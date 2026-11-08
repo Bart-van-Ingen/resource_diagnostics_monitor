@@ -1,0 +1,9 @@
+# Minimal Prometheus config that scrapes telegraf's prometheus_client output
+global:
+  # ros2_pulse writes a window every 5 s by default, scrape at or under that
+  scrape_interval: 1s
+
+scrape_configs:
+  - job_name: telegraf
+    static_configs:
+      - targets: ['localhost:9273']
