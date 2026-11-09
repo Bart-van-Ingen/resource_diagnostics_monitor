@@ -31,6 +31,7 @@ The motivation, architecture and more can be found on the accompanying pages:
   - [Telegraf config](#telegraf-config)
   - [Collectd config](#collectd-config)
   - [Diagnostics config](#diagnostics-config)
+- [Grafana dashboard with ros2_pulse topic rates](#grafana-dashboard-with-ros2_pulse-topic-rates)
 - [The documentation](#the-documentation)
 
 ## Installation
@@ -257,6 +258,42 @@ The configuration file uses the following format:
 
 The same file is given to both nodes in the bringup launch files. Each node picks up its own
 section by node name.
+
+## Grafana dashboard with ros2_pulse topic rates
+
+[ros2_pulse](https://github.com/TanayK07/ros2_pulse) counts the publishes and callbacks of every
+topic in a process, and its `pulse-export` serves them as Prometheus metrics labelled by `pid`.
+`examples/ros2_pulse_dashboard/` puts those rates in one Grafana dashboard next to the procstat CPU
+and memory of the same processes. When a rate drops, you can see whether the process was starved
+or just stopped publishing.
+
+A second telegraf instance runs next to the resource monitor without changing it. It has its own
+procstat input, tagged with `pid`, scrapes `pulse-export`, and serves both on one Prometheus
+endpoint. It does not write to the unix socket, so the ROS topics of the monitor stay the same.
+
+```text
+ros2_pulse (pulse-export :10061) --> telegraf inputs.prometheus
+procstat (ROS node processes)    --> telegraf --> outputs.prometheus_client :9273 --> Prometheus --> Grafana
+```
+
+1. Start your nodes with the ros2_pulse probe and run `pulse-export`, see the
+   [ros2_pulse export docs](https://github.com/TanayK07/ros2_pulse/blob/main/docs/EXPORT.md).
+1. Start the second telegraf instance:
+
+   ```bash
+   telegraf --config examples/ros2_pulse_dashboard/telegraf_ros2_pulse.conf
+   ```
+
+   The binary from `telegraf_vendor` works too: `install/telegraf_vendor/bin/telegraf`.
+
+1. Point Prometheus at telegraf with `examples/ros2_pulse_dashboard/prometheus.yml`, or add its
+   scrape job to your own config.
+1. Import `examples/ros2_pulse_dashboard/ros2_pulse_dashboard.json` in Grafana and pick the
+   Prometheus datasource.
+
+The `node` and `pid` variables filter all panels, so one process can be followed through its topic
+rates, CPU and memory. Only processes matched by the procstat `pattern` (`__node` in the command
+line) have CPU and memory data.
 
 ## The documentation
 
